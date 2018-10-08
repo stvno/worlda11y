@@ -59,3 +59,6 @@ typings/
 
 # next.js build output
 .next
+
+# OSRM input/output data
+osrm/*.os*
