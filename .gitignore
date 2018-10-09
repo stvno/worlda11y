@@ -62,3 +62,4 @@ typings/
 
 # OSRM input/output data
 osrm/*.os*
+export/result*
