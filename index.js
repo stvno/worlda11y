@@ -26,7 +26,7 @@ switch(args) {
         region = process.argv[2]
         osrmFiles = 'osrm/'+region+'.osrm'
         sourceFile = 'data/'+region+'.json'
-        boundboundaryFileary = 'data/'+region+'-boundary.geojson'
+        boundaryFile = 'data/'+region+'-boundary.geojson'
     break
     case 4:
         region = process.argv[2]
