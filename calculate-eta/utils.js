@@ -25,8 +25,6 @@ function range (start, end) {
  *   Origins in the given area
  */
 function originsInRegion (area, origins) {
-
-  console.dir('origins',origins)
   let result = within(origins, featureCollection([area]));
   return result;
 }
