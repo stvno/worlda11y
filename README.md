@@ -17,7 +17,7 @@ The 6 million points are randomly created by PostGIS's
 [Natural Earth](https://www.naturalearthdata.com/) data. Due to the filesize limitations of Node these points have been
 divided into various continents.
 
-Each continent has to be run separately and the resulting CSV files should be joined with `sed MAGIC` (TODO)
+Each continent has to be run separately and the resulting CSV files should be joined with `awk 'FNR==1 && NR!=1{next;}{print}' *.csv > output.csv`
 
 # preparation
 
