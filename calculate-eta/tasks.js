@@ -3,7 +3,6 @@ const range = require('./utils').range,
 originsInRegion= require('./utils').originsInRegion,
 poisInBuffer= require('./utils').poisInBuffer,
 async = require('async'),
-centerOfMass = require( '@turf/center-of-mass')
 
 /**
  * Compute the time it takes for each village inside the given work area to
