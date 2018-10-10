@@ -26,8 +26,8 @@ Each continent has to be run separately and the resulting CSV files should be jo
 **Beware**: OSRM is really sensitive in its versions. Routing graphs created with one version of OSRM cannot be used by the node-binding with a different version. At the time of writing the working combination is v5.18.0:
 ```
  cd osrm
- docker run -t -v $(pwd):/data osrm/osrm-backend:v5.18.0 osrm-extract -p /opt/car.lua /data/<osm data extract>.osm.pbf
- docker run -t -v $(pwd):/data osrm/osrm-backend:v5.18.0 osrm-contract /data/<osm data extract>.osrm
+ docker run --rm -t -v $(pwd):/data osrm/osrm-backend:v5.18.0 osrm-extract -p /opt/car.lua /data/<osm data extract>.osm.pbf
+ docker run --rm -t -v $(pwd):/data osrm/osrm-backend:v5.18.0 osrm-contract /data/<osm data extract>.osrm
 ```
 
 # running
