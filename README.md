@@ -29,6 +29,7 @@ Each continent has to be run separately and the resulting CSV files should be jo
  docker run --rm -t -v $(pwd):/data osrm/osrm-backend:v5.18.0 osrm-extract -p /opt/car.lua /data/<osm data extract>.osm.pbf
  docker run --rm -t -v $(pwd):/data osrm/osrm-backend:v5.18.0 osrm-contract /data/<osm data extract>.osrm
 ```
+*TODO*: the output of the osrm docker has the wrong ownership, you need to `chmod` the files
 
 # running
 
