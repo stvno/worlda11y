@@ -2,7 +2,7 @@
 const range = require('./utils').range,
 originsInRegion= require('./utils').originsInRegion,
 poisInBuffer= require('./utils').poisInBuffer,
-async = require('async'),
+async = require('async')
 
 /**
  * Compute the time it takes for each village inside the given work area to
