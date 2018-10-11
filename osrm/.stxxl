@@ -1,1 +1,1 @@
-disk=/data/stxxl,200000,linuxaio
+disk=/tmp/stxxl,200000,linuxaio
