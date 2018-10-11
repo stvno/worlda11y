@@ -31,7 +31,7 @@ Each continent has to be run separately and the resulting CSV files should be jo
  docker run --rm -t -v $(pwd):/data osrm/osrm-backend:v5.18.0 osrm-extract -p /opt/car.lua /data/<osm data extract>.osm.pbf
  docker run --rm -t -v $(pwd):/data osrm/osrm-backend:v5.18.0 osrm-contract /data/<osm data extract>.osrm
 ```
-The docker version of OSRM is *[REALLY](https://github.com/Project-OSRM/osrm-backend/issues/4584)* slow! If you running it against entire continents it is better to [build](https://github.com/Project-OSRM/osrm-backend) OSRM 5.8.0 locally 
+The docker version of OSRM is *[REALLY](https://github.com/Project-OSRM/osrm-backend/issues/4584)* slow! If you running it against entire continents it is better to [build](https://github.com/Project-OSRM/osrm-backend) OSRM 5.8.0 locally and use `osrm-extract` and `osrm-contract`.
 
 *TODO*: the output of the osrm docker has the wrong ownership, you need to `chmod` the files
 
