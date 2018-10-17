@@ -62,4 +62,8 @@ typings/
 
 # OSRM input/output data
 osrm/*.os*
-export/result*
+export/*.csv
+export/*.geojson
+
+# ignore qgis files
+**/*.qgz
