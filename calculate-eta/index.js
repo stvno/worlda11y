@@ -54,7 +54,7 @@ function init (e) {
   process.send({type: 'status', data: 'srv_loaded_files', id: id});
   // Split the input region in squares for parallelisation.
   let extent = bbox(adminArea);
-  let squares = squareGrid(extent, gridSize || 30, 'kilometers').features;
+  let squares = squareGrid(extent, gridSize || 500, 'kilometers').features;
   process.send({type: 'squarecount', data: squares.length, id: id});
 
   // Create a task for each square to be run below.

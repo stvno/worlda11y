@@ -112,7 +112,6 @@ function createProcessAreaTask (workArea, poi, origins, osrm, maxTime, maxSpeed,
         // Add coordinates.
         properties.lat = village.geometry.coordinates[1];
         properties.lon = village.geometry.coordinates[0];
-        properties.poi = {};
 
         // Compute the final time to each poi. OSRM returns the time it takes
         // from the nearest feature of the source point to the destination point.
@@ -131,7 +130,7 @@ function createProcessAreaTask (workArea, poi, origins, osrm, maxTime, maxSpeed,
           let speed = WALKSPEED * 1000 / 3600;
           // item.list is an array of values in the same order as the
           // village, hence access by index is fine.
-          properties.poi[item.poi] = item.list[villageIdx].eta + nearest.list[villageIdx].distance * speed;
+          properties['poi_'+item.poi] = item.list[villageIdx].eta + nearest.list[villageIdx].distance * speed;
         });
 
         squareResults.push(properties);
