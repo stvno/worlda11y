@@ -1,0 +1,4 @@
+data/africa-latest.json filter=lfs diff=lfs merge=lfs -text
+data/australia-oceania-latest.json filter=lfs diff=lfs merge=lfs -text
+data/south-america-latest.json filter=lfs diff=lfs merge=lfs -text
+data/central-america-latest.json filter=lfs diff=lfs merge=lfs -text
