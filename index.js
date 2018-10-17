@@ -6,10 +6,10 @@ const path = require('path'),
  async = require( 'async'),
  config = require( './config'),
  AppLogger = require( './utils/app-logger'),
- json2csv = require('json2csv').parse,
  DEBUG = config.debug,
  logger = AppLogger({ output: DEBUG }),
- WORK_DIR = path.resolve(__dirname)
+ WORK_DIR = path.resolve(__dirname),
+ json2csv = require('json2csv').parse
 
 let region = 'central-america-latest',
     osrmFiles = 'osrm/'+region+'.osrm',
@@ -46,6 +46,7 @@ var totalAdminAreasToProcess = 0;
 
 
 Promise.all([
+  //TODO: replace with json-big streams
   JSON.parse(fs.readFileSync(sourceFile,'utf8')),
   JSON.parse(fs.readFileSync(destinationFile,'utf8')),
   JSON.parse(fs.readFileSync(boundaryFile,'utf8'))
@@ -79,18 +80,13 @@ Promise.all([
 })
 .then(adminAreasData => {
   logger.group('s3').log('Storing files');
-
-  return Promise.all([
-      // Generate a csv with all the results.
-      saveScenarioFile('csv', region, generateCSV(adminAreasData)),
-      // Generate a JSON file with all results.
-      saveScenarioFile('json', region, generateJSON(adminAreasData)),
-      // For all admin areas combined, results are stored in GeoJSON format.
-      saveScenarioFile('geojson', region, generateGeoJSON(adminAreasData))
-    ])
-    .then(() => {
-      logger.group('s3').log('Storing files complete');
-    });
+  return generateCSV(adminAreasData,region)//,
+ })
+ .then((adminAreasData)=>{
+ return generateGeoJSON(adminAreasData,region)
+ })
+.then(() => {
+      logger.group('s3').log('Storing files complete');  
 })
 .then(() => logger.toFile(`${WORK_DIR}/process.log`))
 .then(() => process.exit(0))
@@ -117,7 +113,7 @@ function createTimeMatrixTask (data, osrmFile) {
     let processData = {
       id: 2,
       poi: data.pois,
-      gridSize: 200,
+      gridSize: 300,
       origins: data.origins,
       osrmFile: osrmFile,
       maxTime: data.maxTime,
@@ -176,7 +172,6 @@ function createTimeMatrixTask (data, osrmFile) {
 
          finish()
 
-          // break;
       }
     });
 
@@ -199,74 +194,12 @@ function createTimeMatrixTask (data, osrmFile) {
 }
 
 /**
- * Stores a scenario file to disk.
- * @param  {object} data   Object with data to store and admin area properties.
- * @return {Promise}
- */
-function saveScenarioFile (type, name, data) {
-  const fileName = `results_${name}_${Date.now()}.${type}`;
-  const filePath = path.resolve(__dirname,'export');
-
-  return new Promise(function(resolve, reject) {
-    fs.writeFile(`${filePath}/${fileName}`, data, 'utf8', function(err) {
-        if (err) reject(err);
-        else resolve(data);
-    });
-});
-}
-
-/**
  * Generates a GeoJSON FeatureCollection from the results
  * @param   {object} data   Object with data to store
  * @return  {FeatureCollection}
  */
-function generateGeoJSON (data) {
+function generateGeoJSON (data,file) {
   // Flatten the results array
-  let jsonResults = [].concat.apply([], data.map(o => o.json));
-  return JSON.stringify({
-    type: 'FeatureCollection',
-    features: jsonResults.map(r => {
-      let ft = {
-        type: 'Feature',
-        properties: {
-          id: r.id,
-          name: r.name,
-          pop: r.population
-        },
-        geometry: {
-          type: 'Point',
-          coordinates: [r.lon, r.lat]
-        }
-      };
-      for (let poiType in r.poi) {
-        ft.properties[`eta-${poiType}`] = r.poi[poiType];
-      }
-      return ft;
-    })
-  });
-}
-
-/**
- * Generates a JSON file from the results
- * @param   {object} data   Object with data to store
- * @return  {object}
- */
-function generateJSON (data) {
-  return JSON.stringify(data.map(o => {
-    return {
-      id: o.adminArea.id,
-      name: o.adminArea.name,
-      results: o.json
-    };
-  }));
-}
-/**
- * Generates a CSV file from the results
- * @param   {object} data   Object with data to store
- * @return  {string}
- */
-function generateCSV (data) {
-  // Merge all the results together.
   let results = data.reduce((acc, o) => {
     if (o.json.length) {
       let items = o.json.map(item => {
@@ -282,24 +215,82 @@ function generateCSV (data) {
     return 'The analysis didn\'t produce any results';
   }
 
-  // Prepare the csv.
-  // To form the fields array for json2csv convert from:
-  // {
-  //  prop1: 'prop1',
-  //  prop2: 'prop2',
-  //  poi: {
-  //    poiName: 'poi-name'
-  //  },
-  //  prop3: 'prop3'
-  // }
-  // to
-  // [prop1, prop2, prop3, poi.poiName]
-  //
-  // Poi fields as paths for nested objects.
-  let poiFields = Object.keys(results[0].poi).map(o => `poi.${o}`);
-  // Get other fields, exclude poi and include new poi.
-  let fields = Object.keys(results[0])
-    .filter(o => o !== 'poi')
-    .concat(poiFields);
-  return json2csv(results,{ fields });
+  let l = results.length, i = 0;
+  return new Promise(function(resolve, reject) {
+    const stream = fs.createWriteStream(`./export/${file}_${Date.now()}.geojson`)
+    stream.write('{ "type": "FeatureCollection","features":[\n')
+    for (i; i<l-1;i++) {
+      let r= results[i]
+      stream.write(JSON.stringify({
+        type: 'Feature',
+        properties: {
+          id: r.id,
+          name: r.name,
+          pop: r.population,
+          poi_town: r.poi_town
+        },
+        geometry: {
+          type: 'Point',
+          coordinates: [r.lon, r.lat]
+        }
+      })+',\n')
+    }
+    let e = results[i++]
+    stream.write(JSON.stringify({
+        type: 'Feature',
+        properties: {
+          id: e.id,
+          name: e.name,
+          pop: e.population,
+          poi_town: e.poi_town
+        },
+        geometry: {
+          type: 'Point',
+          coordinates: [e.lon, e.lat]
+        }
+      })+'\n')
+    stream.write(']}')
+    stream.end()
+    stream.on('error', (err) => reject(err))
+    stream.on('finish', () => resolve(data))
+  })
+}
+
+
+
+/**
+ * Generates a CSV file from the results
+ * @param   {object} data   Object with data to store
+ * @return  {string}
+ */
+function generateCSV (data,file) {
+  // Merge all the results together.
+  let results = data.reduce((acc, o) => {
+    if (o.json.length) {
+      let items = o.json.map(item => {
+        item['admin_area'] = o.adminArea.name;
+        return item;
+      });
+      return acc.concat(items);
+    }
+    return acc;
+  }, []);
+
+  if (!results.length) {
+    return 'The analysis didn\'t produce any results';
+  }
+  let fields =  Object.keys(results[0]), l = results.length, i = 0;
+
+  return new Promise(function(resolve, reject) {
+    const stream = fs.createWriteStream(`./export/${file}_${Date.now()}.csv`)
+
+    stream.write(json2csv(results[0],{fields})+'\n')
+    i++
+    for (i; i<l;i++) {
+        stream.write(json2csv(results[i],{field:fields,header:false})+'\n')
+    }
+    stream.end('this is the end')
+    stream.on('error', (err) => reject(err))
+    stream.on('finish', () => resolve(data))
+  })
 }
