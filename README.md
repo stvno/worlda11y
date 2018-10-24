@@ -40,7 +40,7 @@ The docker version of OSRM is *[REALLY](https://github.com/Project-OSRM/osrm-bac
 Running is fairly easy - once you have the OSRM files setup. Currently only the data for Central America is in the repo. The other regions will follow soon.
 1. `nvm install 8`
 2. `npm install`
-3. `node index.js <parameters>`
+3. `node --max-old-space-size=4096 index.js <parameters>`
 
 # parameters
 The application takes up to three parameters. The region you are interested in (the name of the .osrm file), the name of the source file (the random points), the name of the destination file (the towns).

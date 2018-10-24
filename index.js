@@ -82,7 +82,7 @@ Promise.all([
   logger.group('s3').log('Storing files');
   return generateCSV(adminAreasData,region)//,
  })
- .then((adminAreasData)=>{
+.then((adminAreasData)=>{
  return generateGeoJSON(adminAreasData,region)
  })
 .then(() => {
