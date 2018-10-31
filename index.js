@@ -20,6 +20,7 @@ let region = 'central-america-latest',
 //if there is 1 argument, it is region
 //if there are 2 arguments they are region and source
 //if there are 3 arguments the are region, source and destination
+//if there are 4 arguments the are region, source, destination and boundary
  args = process.argv.length
 switch(args) {
     case 3:
@@ -37,8 +38,15 @@ switch(args) {
     case 5:
         region = process.argv[2]
         osrmFiles = 'osrm/'+region+'.osrm'
-        sourceFile = 'data/'+process.argv[3]
+        sourceFile = 'data/'+process.argv[3]+'.json'
         boundaryFile = 'data/'+process.argv[3]+'-boundary.geojson'
+        destinationFile = 'data/'+process.argv[4]
+    break
+    case 6:
+        region = process.argv[2]
+        osrmFiles = 'osrm/'+region+'.osrm'
+        sourceFile = 'data/'+process.argv[3]+'.json'
+        boundaryFile = 'data/'+process.argv[5]+'.geojson'
         destinationFile = 'data/'+process.argv[4]
     break
 }
@@ -86,7 +94,7 @@ Promise.all([
  return generateGeoJSON(adminAreasData,region)
  })
 .then(() => {
-      logger.group('s3').log('Storing files complete');  
+      logger.group('s3').log('Storing files complete');
 })
 .then(() => logger.toFile(`${WORK_DIR}/process.log`))
 .then(() => process.exit(0))
