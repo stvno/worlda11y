@@ -64,6 +64,9 @@ typings/
 osrm/*.os*
 export/*.csv
 export/*.geojson
+export/*.json
+export/*/*
+data/*.gpkg*
 
 # ignore qgis files
 **/*.qgz
