@@ -1,1 +1,16 @@
 data/*.json filter=lfs diff=lfs merge=lfs -text
+results/africa.geojson filter=lfs diff=lfs merge=lfs -text
+results/asia.geojson filter=lfs diff=lfs merge=lfs -text
+results/australia-oceania.geojson filter=lfs diff=lfs merge=lfs -text
+results/central-america.geojson filter=lfs diff=lfs merge=lfs -text
+results/europe.geojson filter=lfs diff=lfs merge=lfs -text
+results/north-america.geojson filter=lfs diff=lfs merge=lfs -text
+results/south-america.geojson filter=lfs diff=lfs merge=lfs -text
+results/asia.csv filter=lfs diff=lfs merge=lfs -text
+results/australia-oceania.csv filter=lfs diff=lfs merge=lfs -text
+results/central-america.csv filter=lfs diff=lfs merge=lfs -text
+results/europe.csv filter=lfs diff=lfs merge=lfs -text
+results/north-america.csv filter=lfs diff=lfs merge=lfs -text
+results/south-america.csv filter=lfs diff=lfs merge=lfs -text
+results/world.csv filter=lfs diff=lfs merge=lfs -text
+results/africa.csv filter=lfs diff=lfs merge=lfs -text
