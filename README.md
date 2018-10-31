@@ -1,7 +1,7 @@
 # worlda11y
 A comprehensive travel time dataset for the entire landmass of the world to the nearest town.
 
-![All continents](https://raw.githubusercontent.com/stvno/worlda11y/master/results/continents.png)
+![All continents](https://raw.githubusercontent.com/stvno/worlda11y/master/results/world.png)
 
 This project aims to create a dataset of actual traveltime from any area of the world to its nearest town. It uses
 [OpenStreetMap](https://osm.org) and [OSRM](http://project-osrm.org/) to calculate the traveltime by car from
